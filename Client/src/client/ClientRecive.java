@@ -12,34 +12,45 @@ import java.net.UnknownHostException;
 import com.google.gson.Gson;
 
 import clientDto.RequestDto;
+import lombok.RequiredArgsConstructor;
+import simplechatting2.client.ChattingClient;
+import simplechatting2.dto.JoinRespDto;
 
-public class ClientRecive {
+@RequiredArgsConstructor
+public class ClientRecive extends Thread{
 	
-	public static void main(String[] args) {
-		
+	private final Socket socket;
+	private InputStream inputStream;
+	private Gson gson;
+	
+	@Override
+	public void run() {
 		try {
-			Socket socket = new Socket("127.0.0.1", 9090);
-			System.out.println("서버에 접속 성공!");
+			inputStream = socket.getInputStream();				
+			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));	
+			switch(responseDto.getResource()){
+				case "join":
+					// equlasIgnoreCase는 대소문자 구분 
+					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
+					Client.getInstance().getContentView().append(joinRespDto.getWelcomeMessage() + "\n");
+					Client.getInstance().getUserListModel().clear();
+					Client.getInstance().getUserListModel().addElement("--- 전체 ---");
+					Client.getInstance().getUserListModel().addAll(joinRespDto.getConnectedUsers());
+					Client.getInstance().getUserList().setSelectedIndex(0);
+					break;
 			
-
-			InputStream inputStream = socket.getInputStream();				
-			InputStreamReader streamReader = new InputStreamReader(inputStream);
-			BufferedReader reader = new BufferedReader(streamReader);	
-
-			
-			OutputStream outputStream = socket.getOutputStream();
-			PrintWriter printWriter = new PrintWriter(outputStream, true);
-			
-			Gson gson = new Gson();
-			RequestDto<String> dto = new RequestDto<String>("test", "테스트 데이터");
-			printWriter.println(gson.toJson(dto));
 			
 		} catch (UnknownHostException e) {			// ip를 잡지 못했을 때
 			e.printStackTrace();
 		} catch (IOException e) {					// 통신을 잡지 못했을 때
 			e.printStackTrace();
 		}
-		
 	}
 	
+	
+		
+		
+		
 }
+	
+

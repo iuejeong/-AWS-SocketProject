@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements Runnable{
-	
-	private static final int PORT=9090;
+public class Server implements Runnable {
+
+	private static final int PORT = 9090;
 	private ServerSocket serverSocket;
-	
+
 	public static void main(String[] args) {
 		Server server = new Server();
 		server.run();
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -22,25 +22,28 @@ public class Server implements Runnable{
 			socketConnection();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}finally {
 			try {
+				if(serverSocket != null) {
 				serverSocket.close();
-				System.out.println("Server close");
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public void socketConnection() {
 		try {
-			Socket socket = serverSocket.accept();
-			SocketServer socketServer = new SocketServer(socket);
-			socketServer.start();
+			while (true) {
+				Socket socket = serverSocket.accept();
+				SocketServer socketServer = new SocketServer(socket);
+				socketServer.start();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
+		
 	}
-	
-	
+
 }

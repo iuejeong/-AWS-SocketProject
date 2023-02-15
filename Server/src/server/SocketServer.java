@@ -45,9 +45,10 @@ public class SocketServer extends Thread{
 		try {
 			inputStream = socket.getInputStream();
 			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-			String request = in.readLine();
+			
 			
 			while(true) {
+				String request = in.readLine();
 				RequestDto<?> requestDto = gson.fromJson(request, RequestDto.class);
 				String resource = requestDto.getResource();
 				switch (resource) {

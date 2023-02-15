@@ -1,40 +1,44 @@
 package client;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.CardLayout;
-import javax.swing.JTextField;
 import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import javax.swing.JTextArea;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JLabel;
-import javax.swing.ImageIcon;
+import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import lombok.Getter;
+
+@Getter
 public class Client extends JFrame {
 
 	private static Socket socket;
 	private String username;
 	
+	private static Client instance;
+	private DefaultListModel<String> userListModel;
 
 	private JPanel mainPanel;
 	private JTextField usernameField;
 	private JTextField messageField;
 	private JLabel inputMessage;
 	private CardLayout mainCard;
+	private JTextArea contentView;
+	private JList roomList;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -51,10 +55,17 @@ public class Client extends JFrame {
 		});
 	}
 
+	public static Client getInstance() {
+		if (instance == null) {
+			instance = new Client();
+		}
+		return instance;
+	}
+	
 	/**
 	 * Create the frame.
 	 */
-	public Client() {
+	private Client() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 480, 800);
 		mainPanel = new JPanel();
@@ -80,7 +91,7 @@ public class Client extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					socket = new Socket("127.0.0.1", 9090);
-					
+					System.out.println("연결");
 				} catch (ConnectException e1) {
 					JOptionPane
 					.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
@@ -100,9 +111,9 @@ public class Client extends JFrame {
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(0, 65, 464, 630);
-		roomPanel.add(textArea);
+		contentView = new JTextArea();
+		contentView.setBounds(0, 65, 464, 630);
+		roomPanel.add(contentView);
 		
 		messageField = new JTextField();
 		messageField.setBounds(0, 698, 401, 63);
@@ -133,7 +144,7 @@ public class Client extends JFrame {
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
 		
-		JList roomList = new JList();
+		roomList = new JList();
 		roomList.setBounds(100, 0, 364, 761);
 		listPanel.add(roomList);
 		
