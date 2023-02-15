@@ -11,8 +11,4 @@ public class ResponseDto {
 	private String resource;
 	private String status;
 	private String body;
-	private String welcomeMessage;
-	private List<String> connectedUsers;
-	private String title;
-	
 }

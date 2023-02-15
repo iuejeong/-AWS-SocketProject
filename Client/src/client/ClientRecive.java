@@ -8,15 +8,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.DomainCombiner;
-
-import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
-import clientDto.ResponseDto;
-import simplechatting2.dto.JoinRespDto;
-import usermanagemaent.dto.RequestDto;
+import clientDto.RequestDto;
 
 public class ClientRecive {
 	
