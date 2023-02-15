@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.DomainCombiner;
@@ -14,51 +16,34 @@ import com.google.gson.Gson;
 
 import clientDto.ResponseDto;
 import simplechatting2.dto.JoinRespDto;
+import usermanagemaent.dto.RequestDto;
 
 public class ClientRecive {
-
-	private Socket socket;
-	private InputStream inputStream;
-	private Gson gson;
-	private String username;
-	private ResponseDto responseDto;
 	
-	
-	private ClientRecive() {
-		String ip = null;
-		int port = 0;
+	public static void main(String[] args) {
 		
 		try {
-			socket = new Socket(ip, port);
+			Socket socket = new Socket("127.0.0.1", 9090);
+			System.out.println("서버에 접속 성공!");
 			
-			inputStream = socket.getInputStream();
-			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-			gson = new Gson();
+
+			InputStream inputStream = socket.getInputStream();				
+			InputStreamReader streamReader = new InputStreamReader(inputStream);
+			BufferedReader reader = new BufferedReader(streamReader);	
+
 			
-			while(true) {
-				String request = in.readLine();
-				responseDto = gson.fromJson(request, ResponseDto.class);
-				
-				switch(responseDto.getResource()) {
-					case "join":
-						JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
-					case "createRoom":
-					
-					case "sendMessage":
-						
-					case "deleteRoom":
-						
-						
-				}
-				
-			}
+			OutputStream outputStream = socket.getOutputStream();
+			PrintWriter printWriter = new PrintWriter(outputStream, true);
 			
-		} catch (UnknownHostException e) {
+			Gson gson = new Gson();
+			RequestDto<String> dto = new RequestDto<String>("test", "테스트 데이터");
+			printWriter.println(gson.toJson(dto));
+			
+		} catch (UnknownHostException e) {			// ip를 잡지 못했을 때
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e) {					// 통신을 잡지 못했을 때
 			e.printStackTrace();
 		}
-		
 		
 	}
 	
