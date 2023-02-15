@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class RequestDto<T> {
 	private String resource;
-	private String body;
+	private T body;
 }
