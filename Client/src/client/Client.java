@@ -1,4 +1,4 @@
-package JFrame;
+package client;
 
 import java.awt.EventQueue;
 
