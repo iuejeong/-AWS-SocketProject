@@ -7,12 +7,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class ResponseDto {
-	private String resource;
-	private String status;
-	private String body;
+public class JoinRespDto {
 	private String welcomeMessage;
 	private List<String> connectedUsers;
-	private String title;
-	
 }
