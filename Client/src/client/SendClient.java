@@ -26,6 +26,7 @@ public class SendClient {
 	private JList<String> userList;
 	
 	
+	
 	private void sendRequest(String resource, String body) {
 		
 		try {
