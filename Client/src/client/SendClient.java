@@ -28,21 +28,14 @@ public class SendClient{
 		this.socket = socket;
 		gson = new Gson();
 	}
-	
-<<<<<<< HEAD
-	
-	private void sendRequest(String resource, String body) {
-		
-=======
 
 	public void sendRequest(String resource, String body) {
-
->>>>>>> origin/main
+		
 		try {
 			outputStream = socket.getOutputStream();
 			PrintWriter out = new PrintWriter(outputStream, true);
 			RequestDto<?> requestDto = new RequestDto<>(resource, gson.toJson(body));
-			out.println(gson.toJson(requestDto));
+			out.println(gson.toJson(requestDto.getBody()));
 
 		} catch (IOException e) {
 			e.printStackTrace();

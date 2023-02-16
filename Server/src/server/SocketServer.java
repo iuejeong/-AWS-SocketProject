@@ -34,8 +34,8 @@ public class SocketServer extends Thread{
 	
 	public SocketServer(Socket socket) {
 		this.socket = socket;
-		socketServers.add(this);
 		gson = new Gson();
+		socketServers.add(this);
 	}
 	
 	@Override
@@ -54,24 +54,12 @@ public class SocketServer extends Thread{
 				RequestDto<?> requestDto = gson.fromJson(request, RequestDto.class);
 				String resource = requestDto.getResource();
 				switch (resource) {
-					case "join":
-						JoinReqDto joinReqDto = gson.fromJson((String) requestDto.getBody(), JoinReqDto.class);
-						username = joinReqDto.getUsername();
-						List<String> connectedUsers = new ArrayList<>();
-						
-						for (SocketServer socketServer : socketServers) {
-							connectedUsers.add(socketServer.getUsername());
-						}
-						JoinRespDto joinRespDto = new JoinRespDto(username + "님이 접속하였습니다.\n", connectedUsers);
-						ResponseDto<?> responseDto = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
-						sendResponse(responseDto);
-						break;
+				
 					case "username":
 						UsernameReqDto usernameReqDto = gson.fromJson((String) requestDto.getBody(), UsernameReqDto.class);
 						username = usernameReqDto.getUsername();
 						UsernameRespDto usernameRespDto = new UsernameRespDto(username);
-						ResponseDto<?> responseDto2 = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(usernameRespDto));
-						sendResponse(responseDto2);
+						sendResponse(requestDto.getResource(), "ok", gson.toJson(usernameRespDto));
 						
 					case "deleteRoom":
 						
@@ -86,13 +74,15 @@ public class SocketServer extends Thread{
 		}
 	}
 	
-	public void sendResponse(ResponseDto<?> responseDto) {
+	public void sendResponse(String resource, String status, String body) {
+		ResponseDto<String> responseDto = new ResponseDto<String>(resource, status, body); 
 		try {
 			String response = gson.toJson(responseDto);
+			
 			for (SocketServer socketServer : socketServers) {
 				outputStream = socket.getOutputStream();
 				PrintWriter out = new PrintWriter(outputStream, true);
-				out.println(response);
+				out.println(gson.toJson(response));
 				out.flush();
 			}
 		} catch (IOException e) {
