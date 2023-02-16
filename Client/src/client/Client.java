@@ -95,7 +95,7 @@ public class Client extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 
-					if (!usernameField.getText().isBlank()) {
+					if (!usernameField.getText().isBlank()) {	
 						socket = new Socket("127.0.0.1", 9090);
 						System.out.println("연결");
 						
