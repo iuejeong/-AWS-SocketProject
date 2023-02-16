@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.google.gson.JsonObject;
+
 import lombok.Getter;
 
 @Getter
@@ -27,7 +29,7 @@ public class Client extends JFrame {
 
 	private static Socket socket;
 	private String username;
-	
+
 	private static Client instance;
 	private DefaultListModel<String> userListModel;
 
@@ -38,7 +40,8 @@ public class Client extends JFrame {
 	private CardLayout mainCard;
 	private JTextArea contentView;
 	private JList roomList;
-	
+	private JTextArea usernameView;
+
 	/**
 	 * Launch the application.
 	 */
@@ -61,7 +64,7 @@ public class Client extends JFrame {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -74,56 +77,63 @@ public class Client extends JFrame {
 		setContentPane(mainPanel);
 		mainCard = new CardLayout();
 		mainPanel.setLayout(mainCard);
-		
+
 		JPanel loginPanel = new JPanel();
 		loginPanel.setBackground(new Color(0, 255, 64));
 		mainPanel.add(loginPanel, "loginPanel");
 		loginPanel.setLayout(null);
-		
+
 		usernameField = new JTextField();
 		usernameField.setBounds(100, 500, 250, 50);
 		loginPanel.add(usernameField);
 		usernameField.setColumns(10);
-		
+
 		JButton loginButton = new JButton("카카오로 시작하기");
 		loginButton.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					socket = new Socket("127.0.0.1", 9090);
-					System.out.println("연결");
+
+					if (!usernameField.getText().isBlank()) {
+						socket = new Socket("127.0.0.1", 9090);
+						System.out.println("연결");
+						mainCard.show(mainPanel, "listPanel");
+					}
+					SendClient sendClient = new SendClient(socket);
+					sendClient.sendRequest("username", usernameField.getText());
+
+					ClientRecive clientRecive = new ClientRecive(socket);
+					clientRecive.start();
+					
 				} catch (ConnectException e1) {
-					JOptionPane
-					.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
-				mainCard.show(mainPanel, "listPanel");
-				
-				
+
 			}
 		});
 		loginButton.setBounds(100, 560, 250, 40);
 		loginPanel.add(loginButton);
-		
+
 		JPanel roomPanel = new JPanel();
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
-		
+
 		contentView = new JTextArea();
 		contentView.setBounds(0, 65, 464, 630);
 		roomPanel.add(contentView);
-		
+
 		messageField = new JTextField();
 		messageField.setBounds(0, 698, 401, 63);
 		roomPanel.add(messageField);
 		messageField.setColumns(10);
-		
+
 		JLabel roomName = new JLabel("New label");
 		roomName.setBounds(92, 25, 133, 15);
 		roomPanel.add(roomName);
-		
+
 		JLabel exitRoom = new JLabel("");
 		exitRoom.addMouseListener(new MouseAdapter() {
 			@Override
@@ -134,20 +144,20 @@ public class Client extends JFrame {
 		exitRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-exit-to-app-button-612083.png"));
 		exitRoom.setBounds(373, 10, 39, 45);
 		roomPanel.add(exitRoom);
-		
+
 		inputMessage = new JLabel("");
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
-		
+
 		JPanel listPanel = new JPanel();
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
-		
+
 		roomList = new JList();
 		roomList.setBounds(100, 0, 364, 761);
 		listPanel.add(roomList);
-		
+
 		JLabel createRoom = new JLabel("");
 		createRoom.addMouseListener(new MouseAdapter() {
 			@Override
@@ -158,5 +168,9 @@ public class Client extends JFrame {
 		createRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-plus-657023 (2).png"));
 		createRoom.setBounds(29, 91, 45, 45);
 		listPanel.add(createRoom);
+
+		usernameView = new JTextArea();
+		usernameView.setBounds(12, 10, 76, 50);
+		listPanel.add(usernameView);
 	}
 }

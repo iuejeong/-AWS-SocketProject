@@ -17,6 +17,8 @@ import serverDto.JoinReqDto;
 import serverDto.JoinRespDto;
 import serverDto.RequestDto;
 import serverDto.ResponseDto;
+import serverDto.UsernameReqDto;
+import serverDto.UsernameRespDto;
 
 
 @Getter
@@ -64,7 +66,12 @@ public class SocketServer extends Thread{
 						ResponseDto<?> responseDto = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
 						sendResponse(responseDto);
 						break;
-					case "createRoom":
+					case "username":
+						UsernameReqDto usernameReqDto = gson.fromJson((String) requestDto.getBody(), UsernameReqDto.class);
+						username = usernameReqDto.getUsername();
+						UsernameRespDto usernameRespDto = new UsernameRespDto(username);
+						ResponseDto<?> responseDto2 = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(usernameRespDto));
+						sendResponse(responseDto2);
 						
 					case "deleteRoom":
 						
