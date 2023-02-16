@@ -17,8 +17,6 @@ import serverDto.JoinReqDto;
 import serverDto.JoinRespDto;
 import serverDto.RequestDto;
 import serverDto.ResponseDto;
-import serverDto.UsernameReqDto;
-import serverDto.UsernameRespDto;
 
 
 @Getter
@@ -55,26 +53,10 @@ public class SocketServer extends Thread{
 				String resource = requestDto.getResource();
 				switch (resource) {
 					case "join":
-						JoinReqDto joinReqDto = gson.fromJson((String) requestDto.getBody(), JoinReqDto.class);
-						username = joinReqDto.getUsername();
-						List<String> connectedUsers = new ArrayList<>();
-						
-						for (SocketServer socketServer : socketServers) {
-							connectedUsers.add(socketServer.getUsername());
-						}
-						JoinRespDto joinRespDto = new JoinRespDto(username + "님이 접속하였습니다.\n", connectedUsers);
-						ResponseDto<?> responseDto = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
+						username = (String) requestDto.getBody();
+						ResponseDto<?> responseDto = new ResponseDto<String>(resource, "ok", gson.toJson(username));
 						sendResponse(responseDto);
 						break;
-					case "username":
-						UsernameReqDto usernameReqDto = gson.fromJson((String) requestDto.getBody(), UsernameReqDto.class);
-						username = usernameReqDto.getUsername();
-						UsernameRespDto usernameRespDto = new UsernameRespDto(username);
-						ResponseDto<?> responseDto2 = new ResponseDto<>(requestDto.getResource(), "ok", gson.toJson(usernameRespDto));
-						sendResponse(responseDto2);
-						
-					case "deleteRoom":
-						
 					default:
 						System.out.println("해당 요청은 처리할 수 없습니다.(404)");
 						break;

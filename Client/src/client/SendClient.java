@@ -16,22 +16,20 @@ import clientDto.RequestDto;
 // 제목 : username 보내기
 // 방, 제목 생성해서 보내기
 // 메세지 보내기 (더블 클릭해서 개인방, 단톡방)
-public class SendClient{
+public class SendClient {
 
 	private Gson gson;
 	private Socket socket;
 	private OutputStream outputStream;
 	private JTextField InputMessage;
 	private JList<String> userList;
-	
+
 	public SendClient(Socket socket) {
 		this.socket = socket;
 		gson = new Gson();
 	}
-	
 
 	public void sendRequest(String resource, String body) {
-
 		try {
 			outputStream = socket.getOutputStream();
 			PrintWriter out = new PrintWriter(outputStream, true);

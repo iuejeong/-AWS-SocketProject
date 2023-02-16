@@ -98,13 +98,17 @@ public class Client extends JFrame {
 					if (!usernameField.getText().isBlank()) {
 						socket = new Socket("127.0.0.1", 9090);
 						System.out.println("연결");
+						
+						SendClient sendClient = new SendClient(socket);
+						sendClient.sendRequest("join", usernameField.getText());
+						
+						ClientRecive clientRecive = new ClientRecive(socket);
+						clientRecive.start();
 						mainCard.show(mainPanel, "listPanel");
 					}
-					SendClient sendClient = new SendClient(socket);
-					sendClient.sendRequest("username", usernameField.getText());
+					
 
-					ClientRecive clientRecive = new ClientRecive(socket);
-					clientRecive.start();
+					
 					
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
