@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 
 import com.google.gson.Gson;
 
-import clientDto.JoinRespDto;
 import clientDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 

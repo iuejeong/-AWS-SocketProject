@@ -13,8 +13,6 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import lombok.Getter;
-import serverDto.JoinReqDto;
-import serverDto.JoinRespDto;
 import serverDto.RequestDto;
 import serverDto.ResponseDto;
 

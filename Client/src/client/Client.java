@@ -31,7 +31,7 @@ public class Client extends JFrame {
 	private String username;
 
 	private static Client instance;
-	private DefaultListModel<String> userListModel;
+	private DefaultListModel<String> roomListModel;
 
 	private JPanel mainPanel;
 	private JTextField usernameField;
@@ -107,9 +107,6 @@ public class Client extends JFrame {
 						mainCard.show(mainPanel, "listPanel");
 					}
 					
-
-					
-					
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
 				} catch (IOException e1) {
@@ -158,7 +155,8 @@ public class Client extends JFrame {
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
 
-		roomList = new JList();
+		roomListModel = new DefaultListModel<>();
+		roomList = new JList(roomListModel);
 		roomList.setBounds(100, 0, 364, 761);
 		listPanel.add(roomList);
 
@@ -166,7 +164,18 @@ public class Client extends JFrame {
 		createRoom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				mainCard.show(mainPanel, "roomPanel");
+				String input = JOptionPane.showInputDialog(null, "방생성");
+				
+				if(input != null) {
+					mainCard.show(mainPanel, "roomPanel");
+				}
+				
+				SendClient sendClient = new SendClient(socket);
+				sendClient.sendRequest("createRoom", input);
+				
+				ClientRecive clientRecive = new ClientRecive(socket);
+				clientRecive.start();
+				
 			}
 		});
 		createRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-plus-657023 (2).png"));
