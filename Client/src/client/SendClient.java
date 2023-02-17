@@ -33,7 +33,7 @@ public class SendClient {
 		try {
 			outputStream = socket.getOutputStream();
 			PrintWriter out = new PrintWriter(outputStream, true);
-			RequestDto<?> requestDto = new RequestDto<>(resource, gson.toJson(body));
+			RequestDto requestDto = new RequestDto(resource, gson.toJson(body));
 			out.println(gson.toJson(requestDto));
 
 		} catch (IOException e) {
@@ -41,11 +41,15 @@ public class SendClient {
 		}
 	}
 
-	public void sendMessage() {
+	public void sendMessage(String resource, String body) {
 		if (!InputMessage.getText().isBlank()) {
 
 			String toUser = userList.getSelectedIndex() == 0 ? "all" : userList.getSelectedValue();
 
 		}
 	}
+
+	
+		
+	
 }

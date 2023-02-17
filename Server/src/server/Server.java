@@ -9,10 +9,7 @@ public class Server implements Runnable {
 	private static final int PORT = 9090;
 	private ServerSocket serverSocket;
 
-	public static void main(String[] args) {
-		Server server = new Server();
-		server.run();
-	}
+	
 
 	@Override
 	public void run() {
@@ -25,7 +22,7 @@ public class Server implements Runnable {
 		}finally {
 			try {
 				if(serverSocket != null) {
-				serverSocket.close();
+					serverSocket.close();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -33,17 +30,19 @@ public class Server implements Runnable {
 		}
 	}
 
-	public void socketConnection() {
-		try {
+	public void socketConnection() throws IOException {
 			while (true) {
 				Socket socket = serverSocket.accept();
 				SocketServer socketServer = new SocketServer(socket);
 				socketServer.start();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+	}
 		
+	
+	
+	public static void main(String[] args) {
+		Server server = new Server();
+		server.run();
 	}
 
 }

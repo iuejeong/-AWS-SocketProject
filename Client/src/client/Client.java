@@ -1,11 +1,15 @@
 package client;
 
 import java.awt.CardLayout;
+
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
@@ -17,22 +21,25 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 
+import clientDto.CreateRoomReqDto;
+import clientDto.JoinReqDto;
+import clientDto.RequestDto;
 import lombok.Getter;
-import javax.swing.JScrollPane;
 
 @Getter
 public class Client extends JFrame {
 
 	private static Socket socket;
+	private Gson gson;
 	private String username;
 
 	private static Client instance;
-	private DefaultListModel<String> roomListModel;
 
 	private JPanel mainPanel;
 	private JTextField usernameField;
@@ -40,10 +47,12 @@ public class Client extends JFrame {
 	private JLabel inputMessage;
 	private CardLayout mainCard;
 	private JTextArea contentView;
-	private JList roomList;
-	private JTextArea usernameView;
+	private JList<String> roomList;
+	private DefaultListModel<String> roomListModel;
 	private JScrollPane roomListPanel;
 	private JScrollPane contentViewPanel;
+	private JScrollPane messagePanel;
+	private JLabel usernameLabel;
 
 	/**
 	 * Launch the application.
@@ -52,7 +61,7 @@ public class Client extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Client frame = new Client();
+					Client frame = Client.getInstance();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -72,6 +81,8 @@ public class Client extends JFrame {
 	 * Create the frame.
 	 */
 	private Client() {
+		gson = new Gson();
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 480, 800);
 		mainPanel = new JPanel();
@@ -98,20 +109,29 @@ public class Client extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 
-					if (!usernameField.getText().isBlank()) {	
+					if (!usernameField.getText().isBlank()) {
 						socket = new Socket("127.0.0.1", 9090);
 						System.out.println("연결");
-						
-						SendClient sendClient = new SendClient(socket);
-						sendClient.sendRequest("join", usernameField.getText());
-						
-						ClientRecive clientRecive = new ClientRecive(socket);
-						clientRecive.start();
 						mainCard.show(mainPanel, "listPanel");
-					}
-					else {
+
+					} else {
 						JOptionPane.showMessageDialog(null, "아이디를 입력하세요.", "접속실패", JOptionPane.ERROR_MESSAGE);
 					}
+
+					username = usernameField.getText();
+					usernameLabel.setText(username);
+					JoinReqDto joinReqDto = new JoinReqDto(username);
+					String joinReqDtoJson = gson.toJson(joinReqDto);
+					RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
+					String requestDtoJson = gson.toJson(requestDto);
+
+					OutputStream outputStream = socket.getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(requestDtoJson);
+
+					ClientRecive clientRecive = new ClientRecive(socket);
+					clientRecive.start();
+
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
 				} catch (IOException e1) {
@@ -126,11 +146,6 @@ public class Client extends JFrame {
 		JPanel roomPanel = new JPanel();
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
-
-		messageField = new JTextField();
-		messageField.setBounds(0, 698, 401, 63);
-		roomPanel.add(messageField);
-		messageField.setColumns(10);
 
 		JLabel roomName = new JLabel("New label");
 		roomName.setBounds(92, 25, 133, 15);
@@ -151,50 +166,69 @@ public class Client extends JFrame {
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
-		
+
 		contentViewPanel = new JScrollPane();
 		contentViewPanel.setBounds(0, 88, 464, 607);
 		roomPanel.add(contentViewPanel);
-		
-				contentView = new JTextArea();
-				contentViewPanel.setViewportView(contentView);
+
+		contentView = new JTextArea();
+		contentViewPanel.setViewportView(contentView);
+
+		messagePanel = new JScrollPane();
+		messagePanel.setBounds(10, 701, 391, 60);
+		roomPanel.add(messagePanel);
+
+		messageField = new JTextField();
+		messagePanel.setViewportView(messageField);
+		messageField.setColumns(10);
 
 		JPanel listPanel = new JPanel();
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
-
-		roomListModel = new DefaultListModel<>();
 
 		JLabel createRoom = new JLabel("");
 		createRoom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String input = JOptionPane.showInputDialog(null, "방생성");
-				
-				if(input != null) {
+
+				if (input != null) {
 					mainCard.show(mainPanel, "roomPanel");
+					
+					try {
+					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(input);
+					String createRoomReqDtoJson = gson.toJson(createRoomReqDto);
+					RequestDto requestDto = new RequestDto("createRoom", createRoomReqDtoJson);
+					String requestDtoJson = gson.toJson(requestDto);
+
+					OutputStream outputStream = socket.getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(requestDtoJson);
+					} catch (IOException e1) {
+						
+						e1.printStackTrace();
+					}
+					
 				}
-				
-				SendClient sendClient = new SendClient(socket);
-				sendClient.sendRequest("createRoom", input);
-				
-				ClientRecive clientRecive = new ClientRecive(socket);
-				clientRecive.start();
-				
+
 			}
 		});
 		createRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-plus-657023 (2).png"));
 		createRoom.setBounds(29, 91, 45, 45);
 		listPanel.add(createRoom);
 
-		usernameView = new JTextArea();
-		usernameView.setBounds(12, 10, 76, 50);
-		listPanel.add(usernameView);
-		
 		roomListPanel = new JScrollPane();
 		roomListPanel.setBounds(106, 86, 358, 675);
 		listPanel.add(roomListPanel);
-		roomList = new JList(roomListModel);
+
+		roomListModel = new DefaultListModel<>();
+		roomList = new JList<String>(roomListModel);
 		roomListPanel.setViewportView(roomList);
+		
+		usernameLabel = new JLabel("");
+		usernameLabel.setBounds(12, 10, 79, 35);
+		listPanel.add(usernameLabel);
 	}
+
+	
 }
