@@ -106,7 +106,9 @@ public class Client extends JFrame {
 						clientRecive.start();
 						mainCard.show(mainPanel, "listPanel");
 					}
-					
+					else {
+						JOptionPane.showMessageDialog(null, "아이디를 입력하세요.", "접속실패", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
 				} catch (IOException e1) {
