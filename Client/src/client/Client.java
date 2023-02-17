@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import com.google.gson.JsonObject;
 
 import lombok.Getter;
+import javax.swing.JScrollPane;
 
 @Getter
 public class Client extends JFrame {
@@ -41,6 +42,8 @@ public class Client extends JFrame {
 	private JTextArea contentView;
 	private JList roomList;
 	private JTextArea usernameView;
+	private JScrollPane roomListPanel;
+	private JScrollPane contentViewPanel;
 
 	/**
 	 * Launch the application.
@@ -124,10 +127,6 @@ public class Client extends JFrame {
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
 
-		contentView = new JTextArea();
-		contentView.setBounds(0, 65, 464, 630);
-		roomPanel.add(contentView);
-
 		messageField = new JTextField();
 		messageField.setBounds(0, 698, 401, 63);
 		roomPanel.add(messageField);
@@ -152,15 +151,19 @@ public class Client extends JFrame {
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
+		
+		contentViewPanel = new JScrollPane();
+		contentViewPanel.setBounds(0, 88, 464, 607);
+		roomPanel.add(contentViewPanel);
+		
+				contentView = new JTextArea();
+				contentViewPanel.setViewportView(contentView);
 
 		JPanel listPanel = new JPanel();
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
 
 		roomListModel = new DefaultListModel<>();
-		roomList = new JList(roomListModel);
-		roomList.setBounds(100, 0, 364, 761);
-		listPanel.add(roomList);
 
 		JLabel createRoom = new JLabel("");
 		createRoom.addMouseListener(new MouseAdapter() {
@@ -187,5 +190,11 @@ public class Client extends JFrame {
 		usernameView = new JTextArea();
 		usernameView.setBounds(12, 10, 76, 50);
 		listPanel.add(usernameView);
+		
+		roomListPanel = new JScrollPane();
+		roomListPanel.setBounds(106, 86, 358, 675);
+		listPanel.add(roomListPanel);
+		roomList = new JList(roomListModel);
+		roomListPanel.setViewportView(roomList);
 	}
 }
