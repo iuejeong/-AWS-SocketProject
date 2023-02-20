@@ -1,10 +1,8 @@
 package client;
 
 import java.awt.CardLayout;
-
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -24,11 +22,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.google.gson.Gson;
 
 import clientDto.CreateRoomReqDto;
 import clientDto.JoinReqDto;
+import clientDto.MessageReqDto;
 import clientDto.RequestDto;
 import lombok.Getter;
 
@@ -163,6 +165,12 @@ public class Client extends JFrame {
 		roomPanel.add(exitRoom);
 
 		inputMessage = new JLabel("");
+		inputMessage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				sendMessage();
+			}
+		});
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
@@ -194,21 +202,21 @@ public class Client extends JFrame {
 
 				if (input != null) {
 					mainCard.show(mainPanel, "roomPanel");
-					
-					try {
-					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(input);
-					String createRoomReqDtoJson = gson.toJson(createRoomReqDto);
-					RequestDto requestDto = new RequestDto("createRoom", createRoomReqDtoJson);
-					String requestDtoJson = gson.toJson(requestDto);
 
-					OutputStream outputStream = socket.getOutputStream();
-					PrintWriter out = new PrintWriter(outputStream, true);
-					out.println(requestDtoJson);
+					try {
+						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(input);
+						String createRoomReqDtoJson = gson.toJson(createRoomReqDto);
+						RequestDto requestDto = new RequestDto("createRoom", createRoomReqDtoJson);
+						String requestDtoJson = gson.toJson(requestDto);
+
+						OutputStream outputStream = socket.getOutputStream();
+						PrintWriter out = new PrintWriter(outputStream, true);
+						out.println(requestDtoJson);
 					} catch (IOException e1) {
-						
+
 						e1.printStackTrace();
 					}
-					
+
 				}
 
 			}
@@ -222,13 +230,45 @@ public class Client extends JFrame {
 		listPanel.add(roomListPanel);
 
 		roomListModel = new DefaultListModel<>();
-		roomList = new JList<String>(roomListModel);
+		roomList = new JList(roomListModel);
 		roomListPanel.setViewportView(roomList);
-		
+
+		roomList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				roomList = (JList) e.getSource();
+				if (e.getClickCount() == 2) {
+					mainCard.show(mainPanel, "roomPanel");
+				}
+
+			}
+		});
 		usernameLabel = new JLabel("");
 		usernameLabel.setBounds(12, 10, 79, 35);
 		listPanel.add(usernameLabel);
 	}
 
-	
+	private void sendRequest(String resourse, String body) {
+		OutputStream outputStream;
+		try {
+			outputStream = socket.getOutputStream();
+			PrintWriter out = new PrintWriter(outputStream, true);
+			RequestDto requestDto = new RequestDto(resourse, body);
+			out.println(gson.toJson(requestDto));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void sendMessage() {
+		if (!messageField.getText().isBlank()) {
+
+			MessageReqDto messageReqDto = new MessageReqDto(username, messageField.getText());
+
+			sendRequest("sendMessage", gson.toJson(messageReqDto));
+			messageField.setText("");
+		}
+	}
+
 }

@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 import clientDto.CreateRoomRespDto;
 import clientDto.JoinRespDto;
+import clientDto.MessageRespDto;
 import clientDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 
@@ -32,18 +33,20 @@ public class ClientRecive extends Thread {
 				String request = in.readLine();
 				ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
 				switch (responseDto.getResource()) {
-					case "join":
-						JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
-//						Client.getInstance().getUsernameView().append(joinRespDto.getUsername());
-						System.out.println(responseDto.getBody());
-						break;
-					case "createRoom":
-						CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
-						Client.getInstance().getRoomListModel().clear();
-						Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
-						Client.getInstance().getRoomList().setSelectedIndex(0);
-						System.out.println(responseDto.getBody());
-						break;
+				case "join":
+					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
+//                      Client.getInstance().getUsernameView().append(joinRespDto.getUsername());
+					System.out.println(responseDto.getBody());
+					break;
+				case "createRoom":
+					CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
+					Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
+					Client.getInstance().getRoomList().setSelectedIndex(0);
+					System.out.println(responseDto.getBody());
+					break;
+				case "sendMessage":
+					MessageRespDto messageRespDto = gson.fromJson(responseDto.getBody(), MessageRespDto.class);
+					Client.getInstance().getContentView().append(messageRespDto.getMessageValue() + "\n");
 				}
 			}
 		} catch (UnknownHostException e) { // ip를 잡지 못했을 때
