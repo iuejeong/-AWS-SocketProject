@@ -3,6 +3,8 @@ package client;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -120,19 +122,18 @@ public class Client extends JFrame {
 						JOptionPane.showMessageDialog(null, "아이디를 입력하세요.", "접속실패", JOptionPane.ERROR_MESSAGE);
 					}
 
+					
+					ClientRecive clientRecive = new ClientRecive(socket);
+					clientRecive.start();
+					
+					
+					
 					username = usernameField.getText();
 					usernameLabel.setText(username);
 					JoinReqDto joinReqDto = new JoinReqDto(username);
-					String joinReqDtoJson = gson.toJson(joinReqDto);
-					RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
-					String requestDtoJson = gson.toJson(requestDto);
+					sendRequest("join", gson.toJson(joinReqDto));
 
-					OutputStream outputStream = socket.getOutputStream();
-					PrintWriter out = new PrintWriter(outputStream, true);
-					out.println(requestDtoJson);
-
-					ClientRecive clientRecive = new ClientRecive(socket);
-					clientRecive.start();
+					
 
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
@@ -189,6 +190,14 @@ public class Client extends JFrame {
 		messageField = new JTextField();
 		messagePanel.setViewportView(messageField);
 		messageField.setColumns(10);
+		messageField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendMessage();
+				}
+			}
+		});
 
 		JPanel listPanel = new JPanel();
 		mainPanel.add(listPanel, "listPanel");
@@ -199,25 +208,14 @@ public class Client extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String input = JOptionPane.showInputDialog(null, "방생성");
-
+				
 				if (input != null) {
 					mainCard.show(mainPanel, "roomPanel");
-
-					try {
 						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(input);
-						String createRoomReqDtoJson = gson.toJson(createRoomReqDto);
-						RequestDto requestDto = new RequestDto("createRoom", createRoomReqDtoJson);
-						String requestDtoJson = gson.toJson(requestDto);
-
-						OutputStream outputStream = socket.getOutputStream();
-						PrintWriter out = new PrintWriter(outputStream, true);
-						out.println(requestDtoJson);
-					} catch (IOException e1) {
-
-						e1.printStackTrace();
-					}
-
+						sendRequest("createRoom", gson.toJson(createRoomReqDto));
+						
 				}
+				
 
 			}
 		});
@@ -232,7 +230,7 @@ public class Client extends JFrame {
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList(roomListModel);
 		roomListPanel.setViewportView(roomList);
-
+		
 		roomList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -240,6 +238,7 @@ public class Client extends JFrame {
 				if (e.getClickCount() == 2) {
 					mainCard.show(mainPanel, "roomPanel");
 				}
+				
 
 			}
 		});

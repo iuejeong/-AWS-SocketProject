@@ -26,7 +26,8 @@ import serverDto.ResponseDto;
 public class SocketServer extends Thread {
  
     private static List<SocketServer> socketServers = new ArrayList<>();
- 
+    private static List<String> connectedRooms = new ArrayList<>();
+    
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -54,16 +55,15 @@ public class SocketServer extends Thread {
                 case "join":
                     JoinReqDto joinReqDto = gson.fromJson(requestDto.getBody(), JoinReqDto.class);
                     username = requestDto.getBody();
-                    JoinRespDto joinRespDto = new JoinRespDto(username);
+                    JoinRespDto joinRespDto = new JoinRespDto(username, connectedRooms);
                     sendToAll(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
+                    
                     break;
                 case "createRoom":
                     CreateRoomReqDto createRoomReqDto = gson.fromJson(requestDto.getBody(), CreateRoomReqDto.class);
                     roomname = createRoomReqDto.getRoomname();
-                    List connectedRooms = new ArrayList<>();
                     connectedRooms.add(roomname);
                     CreateRoomRespDto createRoomRespDto = new CreateRoomRespDto(connectedRooms);
-                     
                     sendToAll(requestDto.getResource(), "ok", gson.toJson(createRoomRespDto));
                     break;
                 case "sendMessage":

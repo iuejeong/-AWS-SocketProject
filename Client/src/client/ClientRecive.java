@@ -22,13 +22,15 @@ public class ClientRecive extends Thread {
 	private final Socket socket;
 	private InputStream inputStream;
 	private Gson gson;
-
+	private boolean isFirst = true;
+	
 	@Override
 	public void run() {
 		try {
 			inputStream = socket.getInputStream();
 			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
 			gson = new Gson();
+			
 			while (true) {
 				String request = in.readLine();
 				ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
@@ -36,12 +38,18 @@ public class ClientRecive extends Thread {
 				case "join":
 					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
 //                      Client.getInstance().getUsernameView().append(joinRespDto.getUsername());
+					
+					if(isFirst) {
+						Client.getInstance().getRoomListModel().addAll(joinRespDto.getCreateRooms());
+						isFirst = false;
+					}
+					
 					System.out.println(responseDto.getBody());
 					break;
 				case "createRoom":
 					CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
+					Client.getInstance().getRoomListModel().clear();
 					Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
-					Client.getInstance().getRoomList().setSelectedIndex(0);
 					System.out.println(responseDto.getBody());
 					break;
 				case "sendMessage":
