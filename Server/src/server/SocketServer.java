@@ -8,8 +8,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
- 
+import java.util.Map;
+
 import com.google.gson.Gson;
  
 import lombok.Getter;
@@ -26,9 +28,10 @@ import serverDto.ResponseDto;
 public class SocketServer extends Thread {
  
     private static List<SocketServer> socketServers = new ArrayList<>();
+    private static Map<String, List<SocketServer>> roomUsers = new HashMap<>();
     private static List<String> connectedRooms = new ArrayList<>();
     
-    private Socket socket;
+    private Socket socket; 
     private InputStream inputStream;
     private OutputStream outputStream;
     private Gson gson;
@@ -63,6 +66,7 @@ public class SocketServer extends Thread {
                     CreateRoomReqDto createRoomReqDto = gson.fromJson(requestDto.getBody(), CreateRoomReqDto.class);
                     roomname = createRoomReqDto.getRoomname();
                     connectedRooms.add(roomname);
+                    roomUsers.put(roomname, new ArrayList<>());
                     CreateRoomRespDto createRoomRespDto = new CreateRoomRespDto(connectedRooms);
                     sendToAll(requestDto.getResource(), "ok", gson.toJson(createRoomRespDto));
                     break;
@@ -70,7 +74,7 @@ public class SocketServer extends Thread {
                     MessageReqDto messageReqDto = gson.fromJson(requestDto.getBody(), MessageReqDto.class);
                     String message = messageReqDto.getToUser() + ": " + messageReqDto.getMessageValue();
                     MessageRespDto messageRespDto = new MessageRespDto(message);
-                    sendToAll(requestDto.getResource(), "ok", gson.toJson(messageRespDto));
+                    sendToRoom(requestDto.getResource(), "ok", gson.toJson(messageRespDto),messageReqDto.getRoomname());
                      
                     break;
                      
@@ -107,6 +111,18 @@ public class SocketServer extends Thread {
             out.println(gson.toJson(responseDto));
  
         }
- 
+     }
+    
+    private void sendToRoom(String resource, String status, String body, String roomname) throws IOException {
+    	ResponseDto responseDto = new ResponseDto(resource, status, body);
+    	for (SocketServer socketServer : socketServers) {
+    		if(socketServer.getRoomname() != null && socketServer.getRoomname().equals(roomname)) {
+    			System.out.println(roomname);
+    			OutputStream outputStream = socketServer.getSocket().getOutputStream();
+                PrintWriter out = new PrintWriter(outputStream, true);
+                out.println(gson.toJson(responseDto));
+    		}
+    		
+    	}
     }
 }

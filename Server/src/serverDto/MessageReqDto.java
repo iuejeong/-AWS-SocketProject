@@ -8,4 +8,5 @@ import lombok.Data;
 public class MessageReqDto {
 	private String toUser;
 	private String messageValue;
+	private String roomname;
 }

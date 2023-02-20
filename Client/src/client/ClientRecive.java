@@ -37,7 +37,6 @@ public class ClientRecive extends Thread {
 				switch (responseDto.getResource()) {
 				case "join":
 					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
-//                      Client.getInstance().getUsernameView().append(joinRespDto.getUsername());
 					
 					if(isFirst) {
 						Client.getInstance().getRoomListModel().addAll(joinRespDto.getCreateRooms());

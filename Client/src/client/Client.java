@@ -42,6 +42,7 @@ public class Client extends JFrame {
 	private static Socket socket;
 	private Gson gson;
 	private String username;
+	private String roomname;
 
 	private static Client instance;
 
@@ -57,6 +58,7 @@ public class Client extends JFrame {
 	private JScrollPane contentViewPanel;
 	private JScrollPane messagePanel;
 	private JLabel usernameLabel;
+	private String selectRoom;
 
 	/**
 	 * Launch the application.
@@ -231,6 +233,14 @@ public class Client extends JFrame {
 		roomList = new JList(roomListModel);
 		roomListPanel.setViewportView(roomList);
 		
+		roomList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				
+				roomname = roomList.getSelectedValue();
+			}
+		});
+		
 		roomList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -263,11 +273,13 @@ public class Client extends JFrame {
 	private void sendMessage() {
 		if (!messageField.getText().isBlank()) {
 
-			MessageReqDto messageReqDto = new MessageReqDto(username, messageField.getText());
+			MessageReqDto messageReqDto = new MessageReqDto(username, messageField.getText(), roomname);
 
 			sendRequest("sendMessage", gson.toJson(messageReqDto));
 			messageField.setText("");
 		}
 	}
+	
+
 
 }
