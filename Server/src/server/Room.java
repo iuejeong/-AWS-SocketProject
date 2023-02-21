@@ -34,6 +34,10 @@ public class Room {
     public void removeClient(Socket socket) {
         clients.remove(socket);
     }
+    
+    public void removeAllClient() {
+    	clients.removeAll(clients);
+    }
      
     public void broadcast(ResponseDto responseDto) throws IOException {
         
