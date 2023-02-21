@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 
 import clientDto.CreateRoomReqDto;
 import clientDto.JoinReqDto;
+import clientDto.JoinRoomReqDto;
 import clientDto.MessageReqDto;
 import clientDto.RequestDto;
 import lombok.Getter;
@@ -39,10 +40,11 @@ import lombok.Getter;
 @Getter
 public class Client extends JFrame {
 
-	private static Socket socket;
+	private Socket socket;
 	private Gson gson;
 	private String username;
 	private String roomname;
+	private String input;
 
 	private static Client instance;
 
@@ -124,18 +126,13 @@ public class Client extends JFrame {
 						JOptionPane.showMessageDialog(null, "아이디를 입력하세요.", "접속실패", JOptionPane.ERROR_MESSAGE);
 					}
 
-					
 					ClientRecive clientRecive = new ClientRecive(socket);
 					clientRecive.start();
-					
-					
-					
+
 					username = usernameField.getText();
 					usernameLabel.setText(username);
 					JoinReqDto joinReqDto = new JoinReqDto(username);
 					sendRequest("join", gson.toJson(joinReqDto));
-
-					
 
 				} catch (ConnectException e1) {
 					JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
@@ -209,15 +206,15 @@ public class Client extends JFrame {
 		createRoom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String input = JOptionPane.showInputDialog(null, "방생성");
-				
+				input = JOptionPane.showInputDialog(null, "방생성");
+
 				if (input != null) {
 					mainCard.show(mainPanel, "roomPanel");
-						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(input);
-						sendRequest("createRoom", gson.toJson(createRoomReqDto));
-						
+					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
+					sendRequest("createRoom", gson.toJson(createRoomReqDto));
+
+					roomname = input;
 				}
-				
 
 			}
 		});
@@ -232,23 +229,18 @@ public class Client extends JFrame {
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList(roomListModel);
 		roomListPanel.setViewportView(roomList);
-		
-		roomList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				
-				roomname = roomList.getSelectedValue();
-			}
-		});
-		
+
 		roomList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				roomList = (JList) e.getSource();
 				if (e.getClickCount() == 2) {
+					roomname = roomList.getSelectedValue();
+					JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(roomname);
+					sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
+
 					mainCard.show(mainPanel, "roomPanel");
 				}
-				
 
 			}
 		});
@@ -279,7 +271,5 @@ public class Client extends JFrame {
 			messageField.setText("");
 		}
 	}
-	
-
 
 }

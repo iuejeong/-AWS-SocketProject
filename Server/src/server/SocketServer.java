@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+ 
 import com.google.gson.Gson;
  
 import lombok.Getter;
@@ -19,6 +19,7 @@ import serverDto.CreateRoomReqDto;
 import serverDto.CreateRoomRespDto;
 import serverDto.JoinReqDto;
 import serverDto.JoinRespDto;
+import serverDto.JoinRoomReqDto;
 import serverDto.MessageReqDto;
 import serverDto.MessageRespDto;
 import serverDto.RequestDto;
@@ -28,16 +29,15 @@ import serverDto.ResponseDto;
 public class SocketServer extends Thread {
  
     private static List<SocketServer> socketServers = new ArrayList<>();
-    private static Map<String, List<SocketServer>> roomUsers = new HashMap<>();
     private static List<String> connectedRooms = new ArrayList<>();
-    
-    private Socket socket; 
+    private static List<Room> Rooms = new ArrayList<>();
+ 
+    private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Gson gson;
     private String username;
-    private String roomname;
-     
+ 
     public SocketServer(Socket socket) {
         this.socket = socket;
         gson = new Gson();
@@ -53,31 +53,54 @@ public class SocketServer extends Thread {
             while (true) {
                 String request = in.readLine();
                 RequestDto requestDto = gson.fromJson(request, RequestDto.class);
-                 
+ 
                 switch (requestDto.getResource()) {
                 case "join":
                     JoinReqDto joinReqDto = gson.fromJson(requestDto.getBody(), JoinReqDto.class);
                     username = requestDto.getBody();
                     JoinRespDto joinRespDto = new JoinRespDto(username, connectedRooms);
                     sendToAll(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
-                    
+ 
                     break;
                 case "createRoom":
                     CreateRoomReqDto createRoomReqDto = gson.fromJson(requestDto.getBody(), CreateRoomReqDto.class);
-                    roomname = createRoomReqDto.getRoomname();
+                    String kingname = createRoomReqDto.getKingName();
+                    String roomname = createRoomReqDto.getRoomname();
+                    Room room = new Room(kingname, roomname);
+                    Rooms.add(room);
                     connectedRooms.add(roomname);
-                    roomUsers.put(roomname, new ArrayList<>());
                     CreateRoomRespDto createRoomRespDto = new CreateRoomRespDto(connectedRooms);
                     sendToAll(requestDto.getResource(), "ok", gson.toJson(createRoomRespDto));
+                    break;
+                     
+                case "joinRoom":
+                    JoinRoomReqDto joinRoomReqDto = gson.fromJson(requestDto.getBody(), JoinRoomReqDto.class);
+                    String jRoomname = joinRoomReqDto.getRoomname();
+                    for (Room jRoom : Rooms) {
+                        if(jRoom.getRoomName() == jRoomname) {
+                            jRoom.addCilent(this.socket);
+                        }
+                    }
+                     
                     break;
                 case "sendMessage":
                     MessageReqDto messageReqDto = gson.fromJson(requestDto.getBody(), MessageReqDto.class);
                     String message = messageReqDto.getToUser() + ": " + messageReqDto.getMessageValue();
                     MessageRespDto messageRespDto = new MessageRespDto(message);
-                    sendToRoom(requestDto.getResource(), "ok", gson.toJson(messageRespDto),messageReqDto.getRoomname());
+                    String mRoomname = messageReqDto.getRoomname();
+                    System.out.println(message + 'M');
+                    System.out.println(mRoomname + 'R');
                      
+                    for (Room jRoom : Rooms) {
+                         
+                        if(jRoom.getRoomName() == mRoomname) {
+                            jRoom.broadcast(message, this.socket);
+                        }
+                         
+                    }
+ 
                     break;
-                     
+ 
                 default:
                     System.out.println("해당 요청은 처리할 수 없습니다.(404)");
                     break;
@@ -111,18 +134,6 @@ public class SocketServer extends Thread {
             out.println(gson.toJson(responseDto));
  
         }
-     }
-    
-    private void sendToRoom(String resource, String status, String body, String roomname) throws IOException {
-    	ResponseDto responseDto = new ResponseDto(resource, status, body);
-    	for (SocketServer socketServer : socketServers) {
-    		if(socketServer.getRoomname() != null && socketServer.getRoomname().equals(roomname)) {
-    			System.out.println(roomname);
-    			OutputStream outputStream = socketServer.getSocket().getOutputStream();
-                PrintWriter out = new PrintWriter(outputStream, true);
-                out.println(gson.toJson(responseDto));
-    		}
-    		
-    	}
     }
+ 
 }

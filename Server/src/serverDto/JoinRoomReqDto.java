@@ -1,12 +1,13 @@
 package serverDto;
 
+import java.net.Socket;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CreateRoomReqDto {
-	private String kingName;
-	private String roomname;
+public class JoinRoomReqDto {
 
+	private String roomname;
 }
