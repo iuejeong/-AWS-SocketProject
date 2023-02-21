@@ -8,5 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class CreateRoomRespDto {
-	private List createRooms;
+	private List<String> createRooms;
+	private String roomname;
 }

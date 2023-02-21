@@ -9,5 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class JoinRoomReqDto {
 
+	private String username;
 	private String roomname;
 }

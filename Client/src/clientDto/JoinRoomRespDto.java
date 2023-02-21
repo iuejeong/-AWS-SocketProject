@@ -8,4 +8,5 @@ import lombok.Data;
 public class JoinRoomRespDto {
 
 	private String message;
+	private String roomname;
 }

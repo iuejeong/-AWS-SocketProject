@@ -6,12 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Collection;
- 
+
 import com.google.gson.Gson;
- 
+
 import clientDto.CreateRoomRespDto;
+import clientDto.ExitRespDto;
 import clientDto.JoinRespDto;
+import clientDto.JoinRoomRespDto;
 import clientDto.MessageRespDto;
 import clientDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -45,15 +46,27 @@ public class ClientRecive extends Thread {
                      
                     System.out.println(responseDto.getBody());
                     break;
+                case "joinRoom":
+                	JoinRoomRespDto joinRoomRespDto = gson.fromJson(responseDto.getBody(), JoinRoomRespDto.class);
+                	System.out.println(joinRoomRespDto.getMessage());
+                	Client.getInstance().getContentView().append(joinRoomRespDto.getMessage() + "\n");
+                	Client.getInstance().getRoomLabel().setText(joinRoomRespDto.getRoomname());
+                	break;
                 case "createRoom":
                     CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
                     Client.getInstance().getRoomListModel().clear();
                     Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
+                    Client.getInstance().getRoomLabel().setText(createRoomRespDto.getRoomname());
                     System.out.println(responseDto.getBody());
                     break;
                 case "sendMessage":
                     MessageRespDto messageRespDto = gson.fromJson(responseDto.getBody(), MessageRespDto.class);
                     Client.getInstance().getContentView().append(messageRespDto.getMessageValue() + "\n");
+                    break;
+                case "exit":
+                	ExitRespDto exitRespDto = gson.fromJson(responseDto.getBody(), ExitRespDto.class);
+                	Client.getInstance().getContentView().append(exitRespDto.getMessage() + "\n");
+                	break;
                 }
             }
         } catch (UnknownHostException e) { // ip를 잡지 못했을 때

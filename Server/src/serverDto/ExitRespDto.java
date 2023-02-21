@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class JoinRoomRespDto {
+public class ExitRespDto {
 
 	private String message;
-	private String roomname;
 }

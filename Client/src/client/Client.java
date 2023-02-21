@@ -31,11 +31,13 @@ import javax.swing.event.ListSelectionListener;
 import com.google.gson.Gson;
 
 import clientDto.CreateRoomReqDto;
+import clientDto.ExitReqDto;
 import clientDto.JoinReqDto;
 import clientDto.JoinRoomReqDto;
 import clientDto.MessageReqDto;
 import clientDto.RequestDto;
 import lombok.Getter;
+import java.awt.Font;
 
 @Getter
 public class Client extends JFrame {
@@ -61,6 +63,7 @@ public class Client extends JFrame {
 	private JScrollPane messagePanel;
 	private JLabel usernameLabel;
 	private String selectRoom;
+	private JLabel roomLabel;
 
 	/**
 	 * Launch the application.
@@ -149,14 +152,18 @@ public class Client extends JFrame {
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
 
-		JLabel roomName = new JLabel("New label");
-		roomName.setBounds(92, 25, 133, 15);
-		roomPanel.add(roomName);
+		roomLabel = new JLabel();
+		roomLabel.setBounds(92, 25, 133, 15);
+		roomPanel.add(roomLabel);
 
 		JLabel exitRoom = new JLabel("");
 		exitRoom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
+				ExitReqDto exitReqDto = new ExitReqDto(roomname, username);
+				sendRequest("exit", gson.toJson(exitReqDto));
+				contentView.setText("");
 				mainCard.show(mainPanel, "listPanel");
 			}
 		});
@@ -174,14 +181,15 @@ public class Client extends JFrame {
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
-
+		
 		contentViewPanel = new JScrollPane();
 		contentViewPanel.setBounds(0, 88, 464, 607);
 		roomPanel.add(contentViewPanel);
+		
 
 		contentView = new JTextArea();
 		contentViewPanel.setViewportView(contentView);
-
+		
 		messagePanel = new JScrollPane();
 		messagePanel.setBounds(10, 701, 391, 60);
 		roomPanel.add(messagePanel);
@@ -207,13 +215,12 @@ public class Client extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				input = JOptionPane.showInputDialog(null, "방생성");
-
+				roomname = input;
 				if (input != null) {
 					mainCard.show(mainPanel, "roomPanel");
 					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
 					sendRequest("createRoom", gson.toJson(createRoomReqDto));
-
-					roomname = input;
+					contentView.append(roomname + "방이 생성되었습니다. \n");
 				}
 
 			}
@@ -224,10 +231,12 @@ public class Client extends JFrame {
 
 		roomListPanel = new JScrollPane();
 		roomListPanel.setBounds(106, 86, 358, 675);
+		
 		listPanel.add(roomListPanel);
 
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList(roomListModel);
+		roomList.setFont(new Font("D2Coding", Font.BOLD, 46));
 		roomListPanel.setViewportView(roomList);
 
 		roomList.addMouseListener(new MouseAdapter() {
@@ -236,7 +245,7 @@ public class Client extends JFrame {
 				roomList = (JList) e.getSource();
 				if (e.getClickCount() == 2) {
 					roomname = roomList.getSelectedValue();
-					JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(roomname);
+					JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(username, roomname);
 					sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
 
 					mainCard.show(mainPanel, "roomPanel");
