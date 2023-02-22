@@ -124,9 +124,8 @@ public class SocketServer extends Thread {
 						if (jRoom.getKingName().equals(username)) {
 							connectedRooms.remove(exitRoomname);
 							exitRespDto.setConnectedRooms(connectedRooms);
-							responseDto4.setStatus("all");
 							responseDto4.setBody(gson.toJson(exitRespDto));
-							jRoom.broadcast(responseDto4);
+							sendExit(responseDto4, jRoom);
 							jRoom.removeAllClient();
 							Rooms.remove(jRoom);
 						} else if (jRoom.getRoomName().equals(exitRoomname)) {
@@ -173,7 +172,26 @@ public class SocketServer extends Thread {
 		}
 	}
 	
-	
+	public void sendExit(ResponseDto responseDto, Room room) {
+		try {
+			
+			for (SocketServer socketServer : socketServers) {
+				if(room.getClients().contains(socketServer.getSocket())) {
+					responseDto.setStatus("all");
+					room.broadcast(responseDto);
+				} else {
+					responseDto.setStatus("ok");
+					outputStream = socketServer.getSocket().getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(gson.toJson(responseDto));
+					out.flush();
+				}
+				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	

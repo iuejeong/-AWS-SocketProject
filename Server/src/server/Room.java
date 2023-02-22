@@ -47,6 +47,7 @@ public class Room {
 			OutputStream outputStream = socket.getOutputStream();
 			PrintWriter out = new PrintWriter(outputStream, true);
 			out.println(gson.toJson(responseDto));
+			out.flush();
 			System.out.println(responseDto);
 		}
 	}
