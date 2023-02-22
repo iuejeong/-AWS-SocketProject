@@ -41,9 +41,9 @@ public class Room {
      
     public void broadcast(ResponseDto responseDto) throws IOException {
         
-    	for(Socket socket1 : clients) {
+    	for(Socket socket : clients) {
     			
-                OutputStream outputStream = socket1.getOutputStream();
+                OutputStream outputStream = socket.getOutputStream();
                 PrintWriter out = new PrintWriter(outputStream, true);
                 out.println(gson.toJson(responseDto));
                 System.out.println(responseDto);

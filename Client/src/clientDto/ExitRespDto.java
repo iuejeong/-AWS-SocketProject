@@ -1,5 +1,7 @@
 package clientDto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,4 +10,5 @@ import lombok.Data;
 public class ExitRespDto {
 
 	private String message;
+	private List<String> connectedRooms;
 }

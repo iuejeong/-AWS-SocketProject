@@ -114,6 +114,7 @@ public class Client extends JFrame {
 		usernameField.setColumns(10);
 
 		JButton loginButton = new JButton("카카오로 시작하기");
+		loginButton.setFont(new Font("D2Coding", Font.BOLD, 16));
 		loginButton.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -153,6 +154,7 @@ public class Client extends JFrame {
 		roomPanel.setLayout(null);
 
 		roomLabel = new JLabel();
+		roomLabel.setFont(new Font("D2Coding", Font.BOLD, 16));
 		roomLabel.setBounds(92, 25, 133, 15);
 		roomPanel.add(roomLabel);
 
@@ -181,20 +183,21 @@ public class Client extends JFrame {
 		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
-		
+
 		contentViewPanel = new JScrollPane();
 		contentViewPanel.setBounds(0, 88, 464, 607);
 		roomPanel.add(contentViewPanel);
-		
 
 		contentView = new JTextArea();
+		contentView.setFont(new Font("D2Coding", Font.BOLD, 16));
 		contentViewPanel.setViewportView(contentView);
-		
+
 		messagePanel = new JScrollPane();
 		messagePanel.setBounds(10, 701, 391, 60);
 		roomPanel.add(messagePanel);
 
 		messageField = new JTextField();
+		messageField.setFont(new Font("D2Coding", Font.PLAIN, 14));
 		messagePanel.setViewportView(messageField);
 		messageField.setColumns(10);
 		messageField.addKeyListener(new KeyAdapter() {
@@ -231,7 +234,7 @@ public class Client extends JFrame {
 
 		roomListPanel = new JScrollPane();
 		roomListPanel.setBounds(106, 86, 358, 675);
-		
+
 		listPanel.add(roomListPanel);
 
 		roomListModel = new DefaultListModel<>();
@@ -240,20 +243,23 @@ public class Client extends JFrame {
 		roomListPanel.setViewportView(roomList);
 
 		roomList.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				roomList = (JList) e.getSource();
-				if (e.getClickCount() == 2) {
-					roomname = roomList.getSelectedValue();
-					JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(username, roomname);
-					sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
+				if(roomList.getSelectedValue() != null) {
+					roomList = (JList) e.getSource();
+					if (e.getClickCount() == 2) {
+						roomname = roomList.getSelectedValue();
+						JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(username, roomname);
+						sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
 
-					mainCard.show(mainPanel, "roomPanel");
+						mainCard.show(mainPanel, "roomPanel");
+					}
 				}
-
 			}
 		});
 		usernameLabel = new JLabel("");
+		usernameLabel.setFont(new Font("D2Coding", Font.BOLD, 16));
 		usernameLabel.setBounds(12, 10, 79, 35);
 		listPanel.add(usernameLabel);
 	}

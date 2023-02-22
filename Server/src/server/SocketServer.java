@@ -116,24 +116,24 @@ public class SocketServer extends Thread {
 					String username = exitReqDto.getUsername();
 					String exitMessage = username + "님이 나갔습니다.";
 					String exitRoomname = exitReqDto.getRoomname();
-
-					ExitRespDto exitRespDto = new ExitRespDto(exitMessage);
-					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "ok",
-							gson.toJson(exitRespDto));
+					ExitRespDto exitRespDto = new ExitRespDto(exitMessage, connectedRooms);
+					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "ok", gson.toJson(exitRespDto));
 					for (Room jRoom : Rooms) {
 						
 						if (jRoom.getKingName().equals(username)) {
+							connectedRooms.remove(exitRoomname);
+							exitRespDto.setConnectedRooms(connectedRooms);
+							responseDto4.setStatus("all");
+							responseDto4.setBody(gson.toJson(exitRespDto));
+							jRoom.broadcast(responseDto4);
 							jRoom.removeAllClient();
-						}
-						
-						if (jRoom.getRoomName().equals(exitRoomname)) {
+							Rooms.remove(jRoom);
+						} else if (jRoom.getRoomName().equals(exitRoomname)) {
 							jRoom.removeClient(this.socket);
 							jRoom.broadcast(responseDto4);
 						}
-						
-						
-
 					}
+					
 					break;
 
 				default:
