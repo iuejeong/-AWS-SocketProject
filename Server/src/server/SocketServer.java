@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import serverDto.CreateRoomReqDto;
 import serverDto.CreateRoomRespDto;
+import serverDto.ExitAllRespDto;
 import serverDto.ExitReqDto;
 import serverDto.ExitRespDto;
 import serverDto.JoinReqDto;
@@ -135,7 +136,8 @@ public class SocketServer extends Thread {
 					}
 					
 					break;
-
+				
+					
 				default:
 					System.out.println("해당 요청은 처리할 수 없습니다.(404)");
 					break;
@@ -170,9 +172,9 @@ public class SocketServer extends Thread {
 
 		}
 	}
-
-	public void sendJoinRoom() {
-
-	}
-
+	
+	
+	
+	
+	
 }

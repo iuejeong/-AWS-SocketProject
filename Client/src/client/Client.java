@@ -165,6 +165,7 @@ public class Client extends JFrame {
 
 				ExitReqDto exitReqDto = new ExitReqDto(roomname, username);
 				sendRequest("exit", gson.toJson(exitReqDto));
+				
 				contentView.setText("");
 				mainCard.show(mainPanel, "listPanel");
 			}
@@ -224,6 +225,7 @@ public class Client extends JFrame {
 					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
 					sendRequest("createRoom", gson.toJson(createRoomReqDto));
 					contentView.append(roomname + "방이 생성되었습니다. \n");
+					roomLabel.setText(roomname);
 				}
 
 			}
@@ -252,8 +254,9 @@ public class Client extends JFrame {
 						roomname = roomList.getSelectedValue();
 						JoinRoomReqDto joinRoomReqDto = new JoinRoomReqDto(username, roomname);
 						sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
-
+						roomLabel.setText(roomname);
 						mainCard.show(mainPanel, "roomPanel");
+						
 					}
 				}
 			}

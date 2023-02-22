@@ -58,7 +58,6 @@ public class ClientRecive extends Thread {
                     CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
                     Client.getInstance().getRoomListModel().clear();
                     Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
-                    Client.getInstance().getRoomLabel().setText(createRoomRespDto.getRoomname());
                     System.out.println(responseDto.getBody());
                     break;
                 case "sendMessage":
@@ -72,11 +71,13 @@ public class ClientRecive extends Thread {
                 	System.out.println(responseDto);
                 	if(responseDto.getStatus().equalsIgnoreCase("all")) {
                 		JOptionPane.showMessageDialog(null, "방장이 나갔습니다.", "방나가짐", JOptionPane.ERROR_MESSAGE);
-                		Client.getInstance().getRoomListModel().clear();
-                        Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
                 		Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "listPanel");
                 		Client.getInstance().getContentView().setText("");
+                		
                 	}
+                	Client.getInstance().getRoomListModel().clear();
+                    Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
+                	
                 	break;
                 }
             }
