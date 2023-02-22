@@ -118,25 +118,27 @@ public class SocketServer extends Thread {
 					String exitMessage = username + "님이 나갔습니다.";
 					String exitRoomname = exitReqDto.getRoomname();
 					ExitRespDto exitRespDto = new ExitRespDto(exitMessage, connectedRooms);
-					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "ok", gson.toJson(exitRespDto));
+					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "ok",
+							gson.toJson(exitRespDto));
 					for (Room jRoom : Rooms) {
-						
+
 						if (jRoom.getKingName().equals(username)) {
 							connectedRooms.remove(exitRoomname);
 							exitRespDto.setConnectedRooms(connectedRooms);
+							exitRespDto.setMessage(""); 
 							responseDto4.setBody(gson.toJson(exitRespDto));
 							sendExit(responseDto4, jRoom);
 							jRoom.removeAllClient();
 							Rooms.remove(jRoom);
+							break;
 						} else if (jRoom.getRoomName().equals(exitRoomname)) {
 							jRoom.removeClient(this.socket);
 							jRoom.broadcast(responseDto4);
 						}
 					}
-					
+
 					break;
-				
-					
+
 				default:
 					System.out.println("해당 요청은 처리할 수 없습니다.(404)");
 					break;
@@ -171,12 +173,12 @@ public class SocketServer extends Thread {
 
 		}
 	}
-	
+
 	public void sendExit(ResponseDto responseDto, Room room) {
 		try {
-			
+
 			for (SocketServer socketServer : socketServers) {
-				if(room.getClients().contains(socketServer.getSocket())) {
+				if (room.getClients().contains(socketServer.getSocket())) {
 					responseDto.setStatus("all");
 					room.broadcast(responseDto);
 				} else {
@@ -186,13 +188,11 @@ public class SocketServer extends Thread {
 					out.println(gson.toJson(responseDto));
 					out.flush();
 				}
-				
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
 }

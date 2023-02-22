@@ -67,13 +67,14 @@ public class ClientRecive extends Thread {
                 case "exit":
                 	ExitRespDto exitRespDto = gson.fromJson(responseDto.getBody(), ExitRespDto.class);
                 	
-                	Client.getInstance().getContentView().append(exitRespDto.getMessage() + "\n");
-                	System.out.println(responseDto);
+                	
                 	if(responseDto.getStatus().equalsIgnoreCase("all")) {
                 		JOptionPane.showMessageDialog(null, "방장이 나갔습니다.", "방나가짐", JOptionPane.ERROR_MESSAGE);
                 		Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "listPanel");
+                		Client.getInstance().getContentView().setText("");
                 	}
-                	Client.getInstance().getContentView().setText("");
+                	
+                	Client.getInstance().getContentView().append(exitRespDto.getMessage() + "\n");
                 	Client.getInstance().getRoomListModel().clear();
                     Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
                 	
