@@ -117,7 +117,7 @@ public class SocketServer extends Thread {
 					String exitMessage = username + "님이 나갔습니다.";
 					String exitRoomname = exitReqDto.getRoomname();
 					ExitRespDto exitRespDto = new ExitRespDto(exitMessage, connectedRooms);
-					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "ok",
+					ResponseDto responseDto4 = new ResponseDto(requestDto.getResource(), "all",
 							gson.toJson(exitRespDto));
 					for (Room jRoom : Rooms) {
 
@@ -178,11 +178,13 @@ public class SocketServer extends Thread {
 			for (SocketServer socketServer : socketServers) {
 			
 				if (room.getClients().contains(socketServer.getSocket())) {
-					responseDto.setStatus("all");
-					room.broadcast(responseDto);
-					JOptionPane.showMessageDialog(null, "방장이 나갔습니다.", "방나가짐", JOptionPane.ERROR_MESSAGE);
+					responseDto.setStatus("conncetUsers");
+					outputStream = socketServer.getSocket().getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(gson.toJson(responseDto));
+					out.flush();
 				} else {
-					responseDto.setStatus("you");
+					responseDto.setStatus("others");
 					outputStream = socketServer.getSocket().getOutputStream();
 					PrintWriter out = new PrintWriter(outputStream, true);
 					out.println(gson.toJson(responseDto));

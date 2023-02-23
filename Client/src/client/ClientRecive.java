@@ -68,15 +68,16 @@ public class ClientRecive extends Thread {
                 	ExitRespDto exitRespDto = gson.fromJson(responseDto.getBody(), ExitRespDto.class);
                 	
                 	
-                	if(responseDto.getStatus().equalsIgnoreCase("all")) {
+                	if(responseDto.getStatus().equalsIgnoreCase("conncetUsers")) {
+                		JOptionPane.showMessageDialog(null, "방장이 나갔습니다.", "방나가짐", JOptionPane.ERROR_MESSAGE);
                 		Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "listPanel");
                 		Client.getInstance().getContentView().setText("");
                 		Client.getInstance().getRoomListModel().clear();
                         Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
-                	} else if(responseDto.getStatus().equalsIgnoreCase("you")) {
+                	} else if(responseDto.getStatus().equalsIgnoreCase("others")) {
                 		Client.getInstance().getRoomListModel().clear();
                         Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
-                	} else if (responseDto.getStatus().equalsIgnoreCase("ok")) {
+                	} else if (responseDto.getStatus().equalsIgnoreCase("all")) {
                 		Client.getInstance().getRoomListModel().clear();
                         Client.getInstance().getRoomListModel().addAll(exitRespDto.getConnectedRooms());
                     	Client.getInstance().getContentView().append(exitRespDto.getMessage() + "\n");
