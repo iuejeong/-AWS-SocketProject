@@ -64,7 +64,7 @@ public class Client extends JFrame {
 	private JLabel usernameLabel;
 	private String selectRoom;
 	private JLabel roomLabel;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -106,15 +106,14 @@ public class Client extends JFrame {
 		mainCard = new CardLayout();
 		mainPanel.setLayout(mainCard);
 
-		
 		JPanel loginPanel = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Image background = new ImageIcon("./image/오로라.jpg").getImage();
-				g.drawImage(background, 0, 0,480,800, null);
+				g.drawImage(background, 0, 0, 480, 800, null);
 			}
-		
+
 		};
 		mainPanel.add(loginPanel, "loginPanel");
 		loginPanel.setLayout(null);
@@ -160,7 +159,15 @@ public class Client extends JFrame {
 		loginButton.setBounds(100, 560, 250, 40);
 		loginPanel.add(loginButton);
 
-		JPanel roomPanel = new JPanel();
+		JPanel roomPanel = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Image background = new ImageIcon("./image/오로라.jpg").getImage();
+				g.drawImage(background, 0, 0, 480, 800, null);
+			}
+
+		};
 		mainPanel.add(roomPanel, "roomPanel");
 		roomPanel.setLayout(null);
 
@@ -221,7 +228,15 @@ public class Client extends JFrame {
 			}
 		});
 
-		JPanel listPanel = new JPanel();
+		JPanel listPanel = new JPanel(){
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Image background = new ImageIcon("./image/오로라.jpg").getImage();
+				g.drawImage(background, 0, 0,480,800, null);
+			}
+		
+		};
 		mainPanel.add(listPanel, "listPanel");
 		listPanel.setLayout(null);
 
@@ -281,7 +296,7 @@ public class Client extends JFrame {
 			}
 		});
 		usernameLabel = new JLabel("");
-		usernameLabel.setFont(new Font("D2Coding", Font.BOLD, 16));
+		usernameLabel.setFont(new Font("CookieRun Regular", Font.BOLD, 16));
 		usernameLabel.setBounds(12, 10, 79, 35);
 		listPanel.add(usernameLabel);
 	}
@@ -308,6 +323,5 @@ public class Client extends JFrame {
 			messageField.setText("");
 		}
 	}
-
 
 }
