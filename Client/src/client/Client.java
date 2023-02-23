@@ -3,6 +3,10 @@ package client;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -24,9 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.google.gson.Gson;
 
@@ -37,7 +38,6 @@ import clientDto.JoinRoomReqDto;
 import clientDto.MessageReqDto;
 import clientDto.RequestDto;
 import lombok.Getter;
-import java.awt.Font;
 
 @Getter
 public class Client extends JFrame {
@@ -92,6 +92,9 @@ public class Client extends JFrame {
 	 * Create the frame.
 	 */
 	private Client() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("./image/아이콘.png"));
+		setFont(new Font("D2Coding", Font.BOLD, 15));
+		setTitle("불광불급");
 		gson = new Gson();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,7 +173,7 @@ public class Client extends JFrame {
 				mainCard.show(mainPanel, "listPanel");
 			}
 		});
-		exitRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-exit-to-app-button-612083.png"));
+		exitRoom.setIcon(new ImageIcon("./image/나가기.png"));
 		exitRoom.setBounds(373, 10, 39, 45);
 		roomPanel.add(exitRoom);
 
@@ -181,7 +184,7 @@ public class Client extends JFrame {
 				sendMessage();
 			}
 		});
-		inputMessage.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-right-arrow-4510674 (1).png"));
+		inputMessage.setIcon(new ImageIcon("./image/메시지 발송.png"));
 		inputMessage.setBounds(413, 705, 39, 46);
 		roomPanel.add(inputMessage);
 
@@ -232,11 +235,13 @@ public class Client extends JFrame {
 						mainCard.show(mainPanel, "roomPanel");
 
 					}
+				} else {
+					JOptionPane.showMessageDialog(null, "방이름이 비어있습니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
 		});
-		createRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-plus-657023 (2).png"));
+		createRoom.setIcon(new ImageIcon("./image/방생성.png"));
 		createRoom.setBounds(29, 91, 45, 45);
 		listPanel.add(createRoom);
 
