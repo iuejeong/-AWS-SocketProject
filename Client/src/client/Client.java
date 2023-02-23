@@ -64,7 +64,7 @@ public class Client extends JFrame {
 	private JLabel usernameLabel;
 	private String selectRoom;
 	private JLabel roomLabel;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -106,8 +106,12 @@ public class Client extends JFrame {
 		mainCard = new CardLayout();
 		mainPanel.setLayout(mainCard);
 
-		JPanel loginPanel = new JPanel();
-		loginPanel.setBackground(new Color(0, 255, 64));
+		Image background = new ImageIcon("./image/오로라.jpg").getImage();
+		JPanel loginPanel = new JPanel() {
+		    public void paint(Graphics g) {
+		        g.drawImage(background, 0, 0,480,800, null);
+		    }
+		};
 		mainPanel.add(loginPanel, "loginPanel");
 		loginPanel.setLayout(null);
 
@@ -300,5 +304,6 @@ public class Client extends JFrame {
 			messageField.setText("");
 		}
 	}
+
 
 }
