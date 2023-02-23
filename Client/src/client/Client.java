@@ -167,7 +167,7 @@ public class Client extends JFrame {
 				sendRequest("exit", gson.toJson(exitReqDto));
 				
 				contentView.setText("");
-				mainCard.show(mainPanel, "listPanel");
+//				mainCard.show(mainPanel, "listPanel");
 			}
 		});
 		exitRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-exit-to-app-button-612083.png"));

@@ -8,16 +8,15 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
 import lombok.Getter;
 import serverDto.CreateRoomReqDto;
 import serverDto.CreateRoomRespDto;
-import serverDto.ExitAllRespDto;
 import serverDto.ExitReqDto;
 import serverDto.ExitRespDto;
 import serverDto.JoinReqDto;
@@ -170,19 +169,20 @@ public class SocketServer extends Thread {
 			PrintWriter out = new PrintWriter(outputStream, true);
 
 			out.println(gson.toJson(responseDto));
-
+			out.flush();
 		}
 	}
 
 	public void sendExit(ResponseDto responseDto, Room room) {
 		try {
-
 			for (SocketServer socketServer : socketServers) {
+			
 				if (room.getClients().contains(socketServer.getSocket())) {
 					responseDto.setStatus("all");
 					room.broadcast(responseDto);
+					JOptionPane.showMessageDialog(null, "방장이 나갔습니다.", "방나가짐", JOptionPane.ERROR_MESSAGE);
 				} else {
-					responseDto.setStatus("ok");
+					responseDto.setStatus("you");
 					outputStream = socketServer.getSocket().getOutputStream();
 					PrintWriter out = new PrintWriter(outputStream, true);
 					out.println(gson.toJson(responseDto));
