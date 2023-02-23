@@ -165,7 +165,7 @@ public class Client extends JFrame {
 
 				ExitReqDto exitReqDto = new ExitReqDto(roomname, username);
 				sendRequest("exit", gson.toJson(exitReqDto));
-				
+
 				contentView.setText("");
 				mainCard.show(mainPanel, "listPanel");
 			}
@@ -220,16 +220,18 @@ public class Client extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				input = JOptionPane.showInputDialog(null, "방생성");
 				roomname = input;
-				
-				if (roomListModel.contains(roomname)) {
-					JOptionPane.showMessageDialog(null, "이미 존재하는 방 이름입니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
-				}else {
-					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
-					sendRequest("createRoom", gson.toJson(createRoomReqDto));
-					contentView.append(roomname + "방이 생성되었습니다. \n");
-					roomLabel.setText(roomname);
-					mainCard.show(mainPanel, "roomPanel");
-					
+
+				if (input != null && !input.isBlank()) {
+					if (roomListModel.contains(roomname)) {
+						JOptionPane.showMessageDialog(null, "이미 존재하는 방 이름입니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
+					} else {
+						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
+						sendRequest("createRoom", gson.toJson(createRoomReqDto));
+						contentView.append(roomname + "방이 생성되었습니다. \n");
+						roomLabel.setText(roomname);
+						mainCard.show(mainPanel, "roomPanel");
+
+					}
 				}
 
 			}
@@ -252,7 +254,7 @@ public class Client extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(roomList.getSelectedValue() != null) {
+				if (roomList.getSelectedValue() != null) {
 					roomList = (JList) e.getSource();
 					if (e.getClickCount() == 2) {
 						roomname = roomList.getSelectedValue();
@@ -260,7 +262,7 @@ public class Client extends JFrame {
 						sendRequest("joinRoom", gson.toJson(joinRoomReqDto));
 						roomLabel.setText(roomname);
 						mainCard.show(mainPanel, "roomPanel");
-						
+
 					}
 				}
 			}
