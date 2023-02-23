@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -26,6 +28,7 @@ public class ClientRecive extends Thread {
     private InputStream inputStream;
     private Gson gson;
     private boolean isFirst = true;
+    private List<String> rooms;
      
     @Override
     public void run() {
@@ -33,7 +36,8 @@ public class ClientRecive extends Thread {
             inputStream = socket.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             gson = new Gson();
-             
+            rooms = new ArrayList<>(); 
+            
             while (true) {
                 String request = in.readLine();
                 ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
@@ -44,6 +48,7 @@ public class ClientRecive extends Thread {
                     if(isFirst) {
                         Client.getInstance().getRoomListModel().addAll(joinRespDto.getCreateRooms());
                         isFirst = false;
+                        rooms = joinRespDto.getCreateRooms();
                     }
                      
                     

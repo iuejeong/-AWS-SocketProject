@@ -221,12 +221,15 @@ public class Client extends JFrame {
 				input = JOptionPane.showInputDialog(null, "방생성");
 				roomname = input;
 				
-				if (input != null) {
+				if (roomListModel.contains(roomname)) {
+					JOptionPane.showMessageDialog(null, "이미 존재하는 방 이름입니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
+				}else {
 					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
 					sendRequest("createRoom", gson.toJson(createRoomReqDto));
 					contentView.append(roomname + "방이 생성되었습니다. \n");
 					roomLabel.setText(roomname);
 					mainCard.show(mainPanel, "roomPanel");
+					
 				}
 
 			}
