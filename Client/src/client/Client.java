@@ -106,11 +106,15 @@ public class Client extends JFrame {
 		mainCard = new CardLayout();
 		mainPanel.setLayout(mainCard);
 
-		Image background = new ImageIcon("./image/오로라.jpg").getImage();
+		
 		JPanel loginPanel = new JPanel() {
-		    public void paint(Graphics g) {
-		        g.drawImage(background, 0, 0,480,800, null);
-		    }
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Image background = new ImageIcon("./image/오로라.jpg").getImage();
+				g.drawImage(background, 0, 0,480,800, null);
+			}
+		
 		};
 		mainPanel.add(loginPanel, "loginPanel");
 		loginPanel.setLayout(null);
