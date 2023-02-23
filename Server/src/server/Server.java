@@ -10,7 +10,6 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 
 	
-
 	@Override
 	public void run() {
 		try {

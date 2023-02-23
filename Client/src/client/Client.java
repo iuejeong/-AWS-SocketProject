@@ -167,7 +167,7 @@ public class Client extends JFrame {
 				sendRequest("exit", gson.toJson(exitReqDto));
 				
 				contentView.setText("");
-//				mainCard.show(mainPanel, "listPanel");
+				mainCard.show(mainPanel, "listPanel");
 			}
 		});
 		exitRoom.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\아이콘\\free-icon-exit-to-app-button-612083.png"));
@@ -220,12 +220,13 @@ public class Client extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				input = JOptionPane.showInputDialog(null, "방생성");
 				roomname = input;
+				
 				if (input != null) {
-					mainCard.show(mainPanel, "roomPanel");
 					CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
 					sendRequest("createRoom", gson.toJson(createRoomReqDto));
 					contentView.append(roomname + "방이 생성되었습니다. \n");
 					roomLabel.setText(roomname);
+					mainCard.show(mainPanel, "roomPanel");
 				}
 
 			}

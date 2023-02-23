@@ -46,11 +46,10 @@ public class ClientRecive extends Thread {
                         isFirst = false;
                     }
                      
-                    System.out.println(responseDto.getBody());
+                    
                     break;
                 case "joinRoom":
                 	JoinRoomRespDto joinRoomRespDto = gson.fromJson(responseDto.getBody(), JoinRoomRespDto.class);
-                	System.out.println(joinRoomRespDto.getMessage());
                 	Client.getInstance().getContentView().append(joinRoomRespDto.getMessage() + "\n");
                 	Client.getInstance().getRoomLabel().setText(joinRoomRespDto.getRoomname());
                 	break;
@@ -58,7 +57,6 @@ public class ClientRecive extends Thread {
                     CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
                     Client.getInstance().getRoomListModel().clear();
                     Client.getInstance().getRoomListModel().addAll(createRoomRespDto.getCreateRooms());
-                    System.out.println(responseDto.getBody());
                     break;
                 case "sendMessage":
                     MessageRespDto messageRespDto = gson.fromJson(responseDto.getBody(), MessageRespDto.class);
