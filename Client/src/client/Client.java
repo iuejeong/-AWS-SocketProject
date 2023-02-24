@@ -248,6 +248,7 @@ public class Client extends JFrame {
 		inputMessage.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				contentView.setCaretPosition(contentView.getDocument().getLength());
 				sendMessage();
 			}
 		});
@@ -260,11 +261,13 @@ public class Client extends JFrame {
 		roomPanel.add(contentViewPanel);
 
 		contentView = new JTextArea();
+		contentView.setEditable(false);
 		contentView.setForeground(new Color(255, 255, 255));
 		contentView.setBackground(new Color(0, 128, 0));
 		contentView.setFont(new Font("CookieRun Regular", Font.PLAIN, 16));
 		contentViewPanel.setViewportView(contentView);
 
+		
 		messagePanel = new JScrollPane();
 		messagePanel.setBounds(10, 701, 391, 60);
 		roomPanel.add(messagePanel);

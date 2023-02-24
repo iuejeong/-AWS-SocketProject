@@ -63,6 +63,7 @@ public class ClientRecive extends Thread {
                 case "sendMessage":
                     MessageRespDto messageRespDto = gson.fromJson(responseDto.getBody(), MessageRespDto.class);
                     Client.getInstance().getContentView().append(messageRespDto.getMessageValue() + "\n");
+                    Client.getInstance().getContentView().setCaretPosition(Client.getInstance().getContentView().getDocument().getLength());
                     break;
                 case "exit":
                 	ExitRespDto exitRespDto = gson.fromJson(responseDto.getBody(), ExitRespDto.class);
