@@ -229,7 +229,19 @@ public class Client extends JFrame {
 		roomPanel.add(roomLabel);
 
 		JLabel exitRoom = new JLabel("");
+		exitRoom.setIcon(new ImageIcon("./image/나가기1.png"));
 		exitRoom.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				exitRoom.setIcon(new ImageIcon("./image/나가기2.png"));
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				exitRoom.setIcon(new ImageIcon("./image/나가기1.png"));
+			}
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
@@ -240,20 +252,33 @@ public class Client extends JFrame {
 				mainCard.show(mainPanel, "listPanel");
 			}
 		});
-		exitRoom.setIcon(new ImageIcon("./image/나가기.png"));
-		exitRoom.setBounds(373, 10, 39, 45);
+		
+		exitRoom.setBounds(370, 10, 60, 60);
 		roomPanel.add(exitRoom);
 
 		inputMessage = new JLabel("");
+		inputMessage.setIcon(new ImageIcon("./image/전송1.png"));
+		
 		inputMessage.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				inputMessage.setIcon(new ImageIcon("./image/전송2.png"));
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				inputMessage.setIcon(new ImageIcon("./image/전송1.png"));
+			}
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				contentView.setCaretPosition(contentView.getDocument().getLength());
 				sendMessage();
 			}
 		});
-		inputMessage.setIcon(new ImageIcon("./image/메시지 발송.png"));
-		inputMessage.setBounds(413, 705, 39, 46);
+		
+		inputMessage.setBounds(413, 705, 40, 45);
 		roomPanel.add(inputMessage);
 
 		contentViewPanel = new JScrollPane();
@@ -301,14 +326,28 @@ public class Client extends JFrame {
 		listPanel.setLayout(null);
 
 		JLabel createRoom = new JLabel("");
+		createRoom.setIcon(new ImageIcon("./image/추가1.png"));
 		createRoom.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				createRoom.setIcon(new ImageIcon("./image/추가2.png"));
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				createRoom.setIcon(new ImageIcon("./image/추가1.png"));
+			}
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				input = JOptionPane.showInputDialog(null, "방생성");
+				input = JOptionPane.showInputDialog(null, "방이름입력", "방생성", JOptionPane.PLAIN_MESSAGE);
 				roomname = input;
-
-				if (input != null && !input.isBlank()) {
-					if (roomListModel.contains(roomname)) {
+					if (input == null) {
+						JOptionPane.showMessageDialog(null, "취소되었습니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
+					} else if (input.isBlank()){
+						JOptionPane.showMessageDialog(null, "방 이름이 비어있습니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
+					} else if (roomListModel.contains(roomname)) {
 						JOptionPane.showMessageDialog(null, "이미 존재하는 방 이름입니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
 					} else {
 						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
@@ -317,13 +356,10 @@ public class Client extends JFrame {
 						roomLabel.setText("방이름: " + roomname);
 						mainCard.show(mainPanel, "roomPanel");
 					}
-				} else {
-					JOptionPane.showMessageDialog(null, "방이름이 비어있습니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
-				}
-
+			
 			}
 		});
-		createRoom.setIcon(new ImageIcon("./image/방생성.png"));
+		
 		createRoom.setBounds(29, 91, 45, 45);
 		listPanel.add(createRoom);
 
