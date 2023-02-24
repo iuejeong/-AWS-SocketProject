@@ -94,7 +94,7 @@ public class Client extends JFrame {
 	private Client() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("./image/아이콘.png"));
 		setFont(new Font("D2Coding", Font.BOLD, 15));
-		setTitle("불광불급");
+		setTitle("오로라");
 		gson = new Gson();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -119,12 +119,62 @@ public class Client extends JFrame {
 		loginPanel.setLayout(null);
 
 		usernameField = new JTextField();
+		usernameField.setFont(new Font("CookieRun Regular", Font.BOLD, 14));
 		usernameField.setBounds(100, 500, 250, 50);
 		loginPanel.add(usernameField);
 		usernameField.setColumns(10);
 
-		JButton loginButton = new JButton("카카오로 시작하기");
-		loginButton.setFont(new Font("D2Coding", Font.BOLD, 16));
+		JButton loginButton = new JButton("");
+		loginButton.setIcon(new ImageIcon("./image/버튼1.png"));
+		loginButton.setForeground(new Color(255, 255, 255));
+		loginButton.setBackground(new Color(0, 128, 0));
+		loginButton.setFont(new Font("CookieRun Regular", Font.BOLD, 18));
+		
+		loginButton.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				loginButton.setBackground(Color.RED);
+			}
+			
+			public void mouseExited(MouseEvent e) {
+				loginButton.setBackground(new Color(0, 128, 0));
+			}
+		});
+		
+		usernameField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					try {
+
+						if (!usernameField.getText().isBlank()) {
+							socket = new Socket("127.0.0.1", 9090);
+							System.out.println("연결");
+							mainCard.show(mainPanel, "listPanel");
+
+						} else {
+							JOptionPane.showMessageDialog(null, "아이디를 입력하세요.", "접속실패", JOptionPane.ERROR_MESSAGE);
+						}
+
+						ClientRecive clientRecive = new ClientRecive(socket);
+						clientRecive.start();
+
+						username = usernameField.getText();
+						usernameLabel.setText("이름: " + username);
+						JoinReqDto joinReqDto = new JoinReqDto(username);
+						sendRequest("join", gson.toJson(joinReqDto));
+						
+
+					} catch (ConnectException e1) {
+						JOptionPane.showMessageDialog(null, "서버에 연결할 수 없습니다.", "접속실패", JOptionPane.ERROR_MESSAGE);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
+				}
+			}
+		});
 		loginButton.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -144,7 +194,7 @@ public class Client extends JFrame {
 					clientRecive.start();
 
 					username = usernameField.getText();
-					usernameLabel.setText(username);
+					usernameLabel.setText("이름: " + username);
 					JoinReqDto joinReqDto = new JoinReqDto(username);
 					sendRequest("join", gson.toJson(joinReqDto));
 
@@ -172,8 +222,10 @@ public class Client extends JFrame {
 		roomPanel.setLayout(null);
 
 		roomLabel = new JLabel();
-		roomLabel.setFont(new Font("D2Coding", Font.BOLD, 16));
-		roomLabel.setBounds(92, 25, 133, 15);
+		roomLabel.setForeground(new Color(255, 255, 255));
+		roomLabel.setBackground(new Color(0, 0, 0));
+		roomLabel.setFont(new Font("CookieRun Regular", Font.BOLD, 16));
+		roomLabel.setBounds(10, 10, 145, 35);
 		roomPanel.add(roomLabel);
 
 		JLabel exitRoom = new JLabel("");
@@ -208,7 +260,9 @@ public class Client extends JFrame {
 		roomPanel.add(contentViewPanel);
 
 		contentView = new JTextArea();
-		contentView.setFont(new Font("D2Coding", Font.BOLD, 16));
+		contentView.setForeground(new Color(255, 255, 255));
+		contentView.setBackground(new Color(0, 128, 0));
+		contentView.setFont(new Font("CookieRun Regular", Font.PLAIN, 16));
 		contentViewPanel.setViewportView(contentView);
 
 		messagePanel = new JScrollPane();
@@ -216,13 +270,16 @@ public class Client extends JFrame {
 		roomPanel.add(messagePanel);
 
 		messageField = new JTextField();
-		messageField.setFont(new Font("D2Coding", Font.PLAIN, 14));
+		messageField.setBackground(new Color(0, 128, 0));
+		messageField.setForeground(new Color(255, 255, 255));
+		messageField.setFont(new Font("CookieRun Regular", Font.PLAIN, 14));
 		messagePanel.setViewportView(messageField);
 		messageField.setColumns(10);
 		messageField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					contentView.setCaretPosition(contentView.getDocument().getLength());
 					sendMessage();
 				}
 			}
@@ -254,9 +311,8 @@ public class Client extends JFrame {
 						CreateRoomReqDto createRoomReqDto = new CreateRoomReqDto(username, input);
 						sendRequest("createRoom", gson.toJson(createRoomReqDto));
 						contentView.append(roomname + "방이 생성되었습니다. \n");
-						roomLabel.setText(roomname);
+						roomLabel.setText("방이름: " + roomname);
 						mainCard.show(mainPanel, "roomPanel");
-
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "방이름이 비어있습니다.", "방 생성 실패", JOptionPane.ERROR_MESSAGE);
@@ -275,7 +331,9 @@ public class Client extends JFrame {
 
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList(roomListModel);
-		roomList.setFont(new Font("D2Coding", Font.BOLD, 46));
+		roomList.setForeground(new Color(255, 255, 255));
+		roomList.setBackground(new Color(0, 128, 0));
+		roomList.setFont(new Font("CookieRun Regular", Font.BOLD, 30));
 		roomListPanel.setViewportView(roomList);
 
 		roomList.addMouseListener(new MouseAdapter() {
@@ -296,8 +354,10 @@ public class Client extends JFrame {
 			}
 		});
 		usernameLabel = new JLabel("");
+		usernameLabel.setForeground(new Color(255, 255, 255));
+		usernameLabel.setBackground(new Color(255, 255, 255));
 		usernameLabel.setFont(new Font("CookieRun Regular", Font.BOLD, 16));
-		usernameLabel.setBounds(12, 10, 79, 35);
+		usernameLabel.setBounds(10, 10, 145, 35);
 		listPanel.add(usernameLabel);
 	}
 

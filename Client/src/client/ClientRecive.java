@@ -28,7 +28,6 @@ public class ClientRecive extends Thread {
     private InputStream inputStream;
     private Gson gson;
     private boolean isFirst = true;
-    private List<String> rooms;
      
     @Override
     public void run() {
@@ -36,7 +35,6 @@ public class ClientRecive extends Thread {
             inputStream = socket.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             gson = new Gson();
-            rooms = new ArrayList<>(); 
             
             while (true) {
                 String request = in.readLine();
@@ -48,7 +46,6 @@ public class ClientRecive extends Thread {
                     if(isFirst) {
                         Client.getInstance().getRoomListModel().addAll(joinRespDto.getCreateRooms());
                         isFirst = false;
-                        rooms = joinRespDto.getCreateRooms();
                     }
                      
                     
@@ -56,7 +53,7 @@ public class ClientRecive extends Thread {
                 case "joinRoom":
                 	JoinRoomRespDto joinRoomRespDto = gson.fromJson(responseDto.getBody(), JoinRoomRespDto.class);
                 	Client.getInstance().getContentView().append(joinRoomRespDto.getMessage() + "\n");
-                	Client.getInstance().getRoomLabel().setText(joinRoomRespDto.getRoomname());
+                	Client.getInstance().getRoomLabel().setText("방이름: " + joinRoomRespDto.getRoomname());
                 	break;
                 case "createRoom":
                     CreateRoomRespDto createRoomRespDto = gson.fromJson(responseDto.getBody(), CreateRoomRespDto.class);
